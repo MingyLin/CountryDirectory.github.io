@@ -13,14 +13,16 @@
 
 <body>
     <div>
-        <table id="list2"></table>
-        <div id="pager2"></div>
-        <input type="text" id="search">
+        <table id="list"></table>
+        <div id="pager"></div>
+        <input type="text" id="search" placeholder="Search Country...">
         <input type="button" onclick="LoadData()" value="Search">
         <div id="dialog"></div>
     </div>
 </body>
-
+<style>
+    .finger { cursor: pointer; }
+</style>
 <script>
 
     function LoadData(){
@@ -32,10 +34,11 @@
             url: searchName == "" ? 'https://restcountries.eu/rest/v2/all' : "https://restcountries.eu/rest/v2/name/" + searchName,
             dataType: "json",
             success: function (response) {
-                $("#list2").jqGrid('clearGridData');
+                $("#list").jqGrid('clearGridData');
 
                 data = response.map(res =>
                 ({
+                    "flag": '<img width="20px" src="'+ res.flag +'"/>',
                     "name":res.name,
                     "alpha2Code": res.alpha2Code,
                     "alpha3Code": res.alpha3Code,
@@ -44,21 +47,22 @@
                     "callingCodes" : res.callingCodes,
                 }));
                 
-                $("#list2").jqGrid({
+                $("#list").jqGrid({
                     datatype: "local",
                     height: 500,
-                    colNames:['國家名稱','2位國家代碼', '3位國家代碼', '母語名稱','替代國家名稱','國際電話區號'],
+                    colNames:['國家名稱','國旗','2位國家代碼', '3位國家代碼', '母語名稱','替代國家名稱','國際電話區號'],
                     colModel:[
-                        {name:'name',index:'name', width:150, align:"center"},
-                        {name:'alpha2Code',index:'alpha2Code', width:150, align:"center"},
-                        {name:'alpha3Code',index:'alpha3Code', width:150, align:"center"},
+                        {name:'name',index:'name', width:200, align:"center", classes:"finger"},
+                        {name:'flag',index:'flag', width:80, align:"center", autoencode: false, sortable : false},
+                        {name:'alpha2Code',index:'alpha2Code', width:120, align:"center"},
+                        {name:'alpha3Code',index:'alpha3Code', width:120, align:"center"},
                         {name:'nativeName',index:'nativeName', width:250, align:"center"},
                         {name:'altSpellings',index:'altSpellings', width:300},
                         {name:'callingCodes',index:'callingCodes', width:150, align:"center"},
                     ],
                     caption: "國家目錄",
                     rowNum:25,
-                    pager: '#pager2',
+                    pager: '#pager',
                     loadonce: true,
                     onCellSelect: function(rowid,iCol,cellcontent,e){
                         if(iCol === 0){
@@ -72,11 +76,7 @@
                                 $("#dialog").dialog({
                                     modal: true,
                                     title: cellcontent,
-                                    // buttons: {
-                                    //     Ok: function() {
-                                    //         $(this).dialog("close");
-                                    //     }
-                                    // }
+                                    width: 1000
                                 });
                             },
                             error: function (thrownError) {
@@ -88,10 +88,10 @@
                 });
                 
                 for(var i=0;i<=data.length;i++){
-                    $("#list2").jqGrid('addRowData',i+1,data[i]);
+                    $("#list").jqGrid('addRowData',i+1,data[i]);
                 }
 
-                $('#list2').trigger( 'reloadGrid' );
+                $('#list').trigger( 'reloadGrid' );
             },
             error: function (thrownError) {
                 console.log(thrownError);
