@@ -72,11 +72,16 @@
                             dataType: "json",
                             success: function (response)
                             {
-                                $("#dialog").text(JSON.stringify(response));
+                                var html = "<p> TopLevelDomain ："+response[0].topLevelDomain+"</p>";
+                                html += "<p> Capital ："+response[0].capital+"</p>"
+                                html += "<p> Region ："+response[0].region+"</p>"
+                                html += "<p> Subregion ："+response[0].subregion+"</p>"
+                                html += "<p> Population ："+response[0].population+"</p>"
+                                $("#dialog").html(html);
                                 $("#dialog").dialog({
                                     modal: true,
                                     title: cellcontent,
-                                    width: 1000
+                                    width: 600,
                                 });
                             },
                             error: function (thrownError) {
